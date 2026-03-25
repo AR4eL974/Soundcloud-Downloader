@@ -13,7 +13,7 @@ If you can see this now,support for other platforms should be added soon.
 
 
 # INSTALLATION
-For now there are two ways you can install SoundCloud-Downloader, using a [script](#automated-install-script), or manually installing the [dependencies](#dependencies) and downloading SoundCloud Downloader yourself 
+For now there are two ways you can install SoundCloud-Downloader, using a [script](#automated-install-script), or manually installing the [dependencies](#dependencies) and downloading [SoundCloud Downloader](https://github.com/AR4eL974/Soundcloud-Downloader/blob/main/soundcloud.sh) yourself 
 
 
 <!-- MANPAGE: BEGIN EXCLUDED SECTION -->
