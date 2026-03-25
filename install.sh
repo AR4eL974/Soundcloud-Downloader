@@ -3,7 +3,6 @@ os_detect(){
         if [[ $(which pacman) != '' ]]; then
                 OS="Arch"
         elif [[ $(which apt) != '' ]]; then
-
                 OS="Debian"
         elif [[ $(which dnf) != '' ]]; then
                 OS="Redhat"
@@ -18,7 +17,30 @@ arch_installation(){
         echo ""
         echo ""
         echo "Dependencies properly installed"
+}
+
+redhat_installation(){
+        echo "installing yt-dlp and ffmpeg with dnf, please enter your password:"
         sleep 1
+        sudo dnf install yt-dlp ffmpeg
+        echo ""
+        echo ""
+        echo "Dependencies properly installed"
+        sleep 1
+
+}
+
+
+distro_installation (){
+       if [[ $OS == "Arch" ]];then
+             arch_installation
+        elif [[ $OS == "Redhat" ]]; then
+                redhat_installation
+	fi
+ 
+}
+
+installation(){
         echo ""
         echo ""
         echo "getting the last version of SoundCloud Downloader from github..."
@@ -42,14 +64,13 @@ arch_installation(){
         sleep 1
 }
 os_detect
+distro_installation
+installation
 
 echo ""
 echo "OS Detected: $OS based Linux, proceeding to installation for this OS"
 sleep 1
 
-if [[ $OS == "Arch" ]];then
-        arch_installation
-fi
 
 
 
