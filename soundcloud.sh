@@ -10,8 +10,6 @@ usage() {
     echo ""
     echo "Usage: $0 [options]"
     echo ""
-    echo "-d <directory Specifies the directory where downloads will be saved (default: \$HOME/Music/ScLikes/)\n" "-d <directory>"
-    echo""
     echo "-h            Displays this help menu"
     echo ""
 
