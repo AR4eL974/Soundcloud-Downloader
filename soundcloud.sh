@@ -61,35 +61,34 @@ YTMP3="yt-dlp --download-archive downloaded.txt --no-post-overwrites -ciwx --emb
 
 PLAYLISTS=$(awk -F',' -v l=1 -v col=1 'NR==l {print $col}' ~/.config/soundcloud_downloader/tracks.csv)
 appel_sons(){
-clear
-echo ""
-echo ""
-printf "   |----------------------------------------------------------------|\n"
-printf "   |                      SoundCloud Downloader                     |\n"
-printf "   |----------------------------------------------------------------|\n"
-printf "   |                                                                |\n"
-printf "   |      Current Playlists to downloads:                           |\n"
-printf "   |                                                                |\n"
-
-a='a'
-i=1
-if [[ $(ls ~/.config/soundcloud_downloader/ | grep "tracks.csv") == '' ]];then
+        clear
+        echo ""
+        echo ""
+        printf "   |----------------------------------------------------------------|\n"
+        printf "   |                      SoundCloud Downloader                     |\n"
+        printf "   |----------------------------------------------------------------|\n"
+        printf "   |                                                                |\n"        
+        printf "   |      Current Playlists to downloads:                           |\n"
 	printf "   |                                                                |\n"
-else
-while [[ $a != '' ]]; do
-	a=$(awk -F',' -v l=$i -v col=1 'NR==l {print $col}' ~/.config/soundcloud_downloader/tracks.csv)
-	a=${a%/s-*
-	a=${a%\?*}  
-	a=${a##*/}  
-	if [[ $a != '' ]]; then
-		printf "   |    ${BLUE}%-5s${NC} %-53s |\n" "[$i]" "$a"
+
+	a='a'
+	i=1
+	if [[ $(ls ~/.config/soundcloud_downloader/ | grep "tracks.csv") == '' ]] ; then
+		printf "   |                                                                |\n"
+	else
+		while [[ $a != '' ]]; do
+			a=$(awk -F',' -v l=$i -v col=1 'NR==l {print $col}' ~/.config/soundcloud_downloader/tracks.csv)
+			a=${a%/s-*}
+			a=${a%\?*}  
+			a=${a##*/}  
+			if [[ $a != '' ]]; then
+				printf "   |    ${BLUE}%-5s${NC} %-53s |\n" "[$i]" "$a"
+			fi
+			((i++))
+		done
 	fi
-	((i++))
-done
-printf "   |                                                                |\n"
-
-
-fi
+	
+	printf "   |                                                                |\n"
 }
 choix_init(){
 printf "   |----------------------------------------------------------------|\n"
