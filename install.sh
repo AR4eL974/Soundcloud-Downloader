@@ -70,8 +70,9 @@ installation(){
         chmod +x soundcloud.sh
         sleep 1
         echo ""
-        echo "installation complete, you may want to delete this installer by running 'rm install.sh' or deleting it via your file explorer"
+        echo "installation complete, the installer will now remove itself"
         sleep 1
+        rm install.sh
 }
 
 
