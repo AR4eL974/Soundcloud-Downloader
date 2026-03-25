@@ -30,6 +30,16 @@ redhat_installation(){
 
 }
 
+debian_installation(){
+        echo "installing yt-dlp and ffmpeg with apt, please enter your password:"
+        sleep 1
+        sudo apt install yt-dlp ffmpeg
+        echo ""
+        echo ""
+        echo "Dependencies properly installed"
+        sleep 1
+}
+
 
 distro_installation (){
        if [[ $OS == "Arch" ]];then
@@ -63,13 +73,14 @@ installation(){
         echo "installation complete, you may want to delete this installer by running 'rm install.sh' or deleting it via your file explorer"
         sleep 1
 }
-os_detect
-distro_installation
-installation
 
+
+os_detect
 echo ""
 echo "OS Detected: $OS based Linux, proceeding to installation for this OS"
 sleep 1
+distro_installation
+installation
 
 
 
