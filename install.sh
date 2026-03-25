@@ -36,7 +36,7 @@ arch_installation(){
         echo "installation complete, you may want to delete this installer by running 'rm install.sh' or deleting it via your file explorer"
 }
 os_detect
-if [[ $OS == 'Arch' ]];then
+if [[ $OS == "Arch" ]];then
         arch_installation
 fi
 
