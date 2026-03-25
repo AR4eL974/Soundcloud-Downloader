@@ -27,7 +27,7 @@ arch_installation(){
         echo ""
         echo "extracting the executable from the repo directory and deleting the directory"
         cp Soundcloud-Downloader/soundcloud.sh soundcloud.sh
-        rm -r Soundcloud-Downloader
+        rm -rf Soundcloud-Downloader
         echo ""
         echo ""
         echo "giving execution permissions to the executable"
