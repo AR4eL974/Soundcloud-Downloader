@@ -39,7 +39,7 @@ while getopts "d:h" opt; do
             usage
             ;;
         \?)
-            echo "Geçersiz seçenek: -$OPTARG" >&2
+            echo "Invalid Option: -$OPTARG" >&2
             usage
             ;;
     esac
@@ -47,16 +47,14 @@ done
 
 
 
-# Hedef dizin kontrolü ve oluşturma
+# Target directory control and creation
 if [ ! -d "$TARGET_DIR" ]; then
     echo "Target directory not found, creating: $TARGET_DIR"
     mkdir -p "$TARGET_DIR"
 fi
 
 if ! command -v yt-dlp &> /dev/null; then
-    echo "installation de yt-dlp"
-    sudo pacman -S yt-dlp
-    echo "installation finie"
+    echo "Please install yt-dlp before using SoundCloud Downloader"
 fi
 YTMP3="yt-dlp --download-archive downloaded.txt --no-post-overwrites -ciwx --embed-thumbnail --audio-quality 0 --add-metadata --audio-format mp3 -o %(title)s "
 
@@ -80,9 +78,9 @@ if [[ $(ls ~/.config/soundcloud_downloader/ | grep "tracks.csv") == '' ]];then
 else
 while [[ $a != '' ]]; do
 	a=$(awk -F',' -v l=$i -v col=1 'NR==l {print $col}' ~/.config/soundcloud_downloader/tracks.csv)
-	a=${a%/s-*}  # retain the part before the colon
-	a=${a%\?*}  # retain the part before the colon
-	a=${a##*/}  # retain the part after the last slash
+	a=${a%/s-*
+	a=${a%\?*}  
+	a=${a##*/}  
 	if [[ $a != '' ]]; then
 		printf "   |    ${BLUE}%-5s${NC} %-53s |\n" "[$i]" "$a"
 	fi
@@ -121,12 +119,12 @@ if [[ $touche == 'D' ]] || [[ $touche == 'd' ]]; then
 	    if [[ $PLAYLIST == '' ]];then
 		    break
 	    fi
-	    TITRE=${PLAYLIST%/s-*}  # retain the part before the colon
-	    TITRE=${TITRE%\?*}  # retain the part before the colon
-	    TITRE=${TITRE##*/}  # retain the part after the last slash
+	    TITRE=${PLAYLIST%/s-*}
+	    TITRE=${TITRE%\?*} 
+	    TITRE=${TITRE##*/}  
 	    echo ""
 	    echo ""
-	    echo -e " Téléchargement de :\e[32m $TITRE\e[0m"
+	    echo -e " Downloading :\e[32m $TITRE\e[0m"
 	    echo ""
 	    echo ""
 	    echo ""
@@ -137,10 +135,10 @@ if [[ $touche == 'D' ]] || [[ $touche == 'd' ]]; then
 	    echo ""
 	    echo ""
 	    if [ $? -ne 0 ]; then
-	        echo "échec de téléchargement: $PLAYLIST"
+	        echo "Download of : $PLAYLIST Failed"
 	
 	    else
-	    echo -e " Téléchargement de \e[32m $TITRE\e[0m Fini"
+	    echo -e " Finished downloading \e[32m $TITRE\e[0m"
 	    cd ..
 	    fi
 	    ((i++))
@@ -150,7 +148,7 @@ if [[ $touche == 'D' ]] || [[ $touche == 'd' ]]; then
 	done
 	echo ""
 	echo ""
-	echo "Toutes les playlists sont téléchargées"
+	echo "All playlists were downloaded"
 	exit
 
 elif [[ $touche == 'E' ]] || [[ $touche == 'e' ]] ; then
@@ -184,9 +182,9 @@ elif [[ $touche == 'E' ]] || [[ $touche == 'e' ]] ; then
 		while [[ $TITRE == '' ]];do
 			read lien
 			if [[ $lien != '' ]] && [[ $(echo $lien | grep "://") != '' ]] && [[ $(echo $lien | grep "soundcloud.com") != '' ]] ;then
-				TITRE=${lien%/s-*}  # retain the part before the colon
-			        TITRE=${TITRE%\?*}  # retain the part before the colon
-				TITRE=${TITRE##*/}  # retain the part after the last slash
+				TITRE=${lien%/s-*}  
+			        TITRE=${TITRE%\?*} 
+				TITRE=${TITRE##*/}
 				
 			else
 				clear
