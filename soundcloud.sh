@@ -5,6 +5,19 @@ RED='\033[0;31m'
 GREEN='\033[0;32m'
 NC='\033[0m' # No Color
 
+if [[ $(ls ~/.config/soundcloud_downloader | grep "config") != '' ]];then
+	if [[ $(cat ~/.config/soundcloud_downloader/config | grep "DownloadPath") != '' ]];then
+		TARGET_DIR=$(cat ~/.config/soundcloud_downloader/config | grep "DownloadPath")
+		TARGET_DIR=${TARGET_DIR##*DownloadPath=}  
+		if [[ $(echo "$TARGET_DIR" | grep "~") != '' ]];then
+			TARGET_DIR=${TARGET_DIR##*~}
+			TARGET_DIR="$HOME$TARGET_DIR"
+		fi
+
+	fi
+else 
+	TARGET_DIR="$HOME/Music/SoundCloud_Downloader"
+fi
 while [[ 1 == 1 ]]; do
 usage() {
     echo ""
@@ -17,7 +30,7 @@ usage() {
 }
 
 
-TARGET_DIR="$HOME/Music/SoundCloud_Downloader"
+
 
 if [[ $(ls ~/.config/ | grep "soundcloud_downloader") == '' ]];then
 	echo ""
