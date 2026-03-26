@@ -5,6 +5,7 @@ RED='\033[0;31m'
 GREEN='\033[0;32m'
 NC='\033[0m' # No Color
 
+path_refresh(){
 if [[ $(ls ~/.config/soundcloud_downloader | grep "config") != '' ]];then
 	if [[ $(cat ~/.config/soundcloud_downloader/config | grep "DownloadPath") != '' ]];then
 		TARGET_DIR=$(cat ~/.config/soundcloud_downloader/config | grep "DownloadPath")
@@ -18,6 +19,8 @@ if [[ $(ls ~/.config/soundcloud_downloader | grep "config") != '' ]];then
 else 
 	TARGET_DIR="$HOME/Music/SoundCloud_Downloader"
 fi
+}
+
 while [[ 1 == 1 ]]; do
 usage() {
     echo ""
@@ -72,15 +75,21 @@ YTMP3="yt-dlp --download-archive downloaded.txt --no-post-overwrites -ciwx --emb
 
 PLAYLISTS=$(awk -F',' -v l=1 -v col=1 'NR==l {print $col}' ~/.config/soundcloud_downloader/tracks.csv)
 appel_sons(){
+		path_refresh
         clear
         echo ""
         echo ""
         printf "   |----------------------------------------------------------------|\n"
         printf "   |                      SoundCloud Downloader                     |\n"
         printf "   |----------------------------------------------------------------|\n"
-        printf "   |                                                                |\n"        
-        printf "   |      Current Playlists to downloads:                           |\n"
-	printf "   |                                                                |\n"
+        printf "   |                                                                |\n"   
+		printf "   |  Current Dowload Path: %-39s |\n" "$TARGET_DIR"
+		printf "   |  (Press F to change)                                           |\n"
+		printf "   |                                                                |\n"
+        printf "   |  Current Playlists to downloads:                               |\n"
+		printf "   |                                                                |\n"
+
+
 
 	a='a'
 	i=1
@@ -235,6 +244,35 @@ elif [[ $touche == 'E' ]] || [[ $touche == 'e' ]] ; then
 
 	fi
 
+
+elif [[ $touche == 'F' ]] || [[ $touche == 'f' ]] ; then
+
+	appel_sons
+	printf "   |----------------------------------------------------------------|\n"
+	printf "   |      Please type new Download path:                            |\n"
+	printf "   |                                                                |\n"
+	read Path
+	if [[ $(ls ~/.config | grep "soundcloud_downloader") != '' ]]; then
+		if [[ $(ls ~/.config/soundcloud_downloader/config | grep "config") != '' ]]; then
+			if [[ $(cat ~/.config/soundcloud_downloader/config | grep "DownloadPath") == '' ]];then
+				echo "DownloadPath=$Path" >> ~/.config/soundcloud_downloader/config
+			else
+				sed -i '/DownloadPath=/d' ~/.config/soundcloud_downloader/config
+				echo "DownloadPath=$Path" >> ~/.config/soundcloud_downloader/config				
+			fi
+
+		else 
+			echo "DownloadPath=$Path" > ~/.config/soundcloud_downloader/config
+		fi
+	else
+		mkdir -p ~/.config/soundcloud_downloader/config
+		echo "DownloadPath=$Path" > ~/.config/soundcloud_downloader/config
+
+
+	fi
+
+
+
 elif [[ $touche == 'Q' ]] || [[ $touche == 'q' ]] ; then
 	appel_sons	
 	printf "   |----------------------------------------------------------------|\n"
@@ -244,3 +282,4 @@ elif [[ $touche == 'Q' ]] || [[ $touche == 'q' ]] ; then
 
 fi
 done
+
