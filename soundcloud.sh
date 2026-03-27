@@ -5,6 +5,29 @@ RED='\033[0;31m'
 GREEN='\033[0;32m'
 NC='\033[0m' # No Color
 
+
+not_playlist(){
+
+	clear
+	appel_sons
+	printf "   |----------------------------------------------------------------|\n"
+	printf "   |       Download: D    |    ${GREEN}Edit playlists: E${NC}    |    Quit: Q    |\n"
+	printf "   |----------------------------------------------------------------|\n"
+	printf "   |   ${GREEN}Add playlists: A${NC}   |   Delete playlists: D   | [*]Cancel: C  |\n"
+	printf "   |----------------------------------------------------------------|\n"
+	printf "   |                      Paste playlist here:                      |\n"
+	printf "   |        ${RED}This URL appears to be a track and not a playlist.  ${NC}    |\n"
+	printf "   |                  ${RED}Do you want to download it ? ${NC}                 |\n"
+	printf "   |----------------------------------------------------------------|\n"
+	printf "   | Yes, Download ts anyway  : Y |     No twin please don't: N     |\n"
+	printf "   |----------------------------------------------------------------|\n"
+	read -sn 1 touche_son
+	if [[ $touche_son == 'Y' ]] || [[ $touche_son == 'y' ]];then
+		exit
+	fi
+
+
+}
 path_refresh(){
 if [[ $(ls ~/.config/soundcloud_downloader | grep "config") != '' ]];then
 	if [[ $(cat ~/.config/soundcloud_downloader/config | grep "DownloadPath") != '' ]];then
@@ -73,7 +96,7 @@ fi
 YTMP3="yt-dlp --download-archive downloaded.txt --no-post-overwrites -ciwx --embed-thumbnail --audio-quality 0 --add-metadata --audio-format mp3 -o %(title)s "
 
 
-PLAYLISTS=$(awk -F',' -v l=1 -v col=1 'NR==l {print $col}' ~/.config/soundcloud_downloader/tracks.csv)
+PLAYLISTS=$(awk -F',' -v l=1 -v col=1 'NR==l {print $col}' ~/.config/soundcloud_downloader/playlists.csv)
 appel_sons(){
 		path_refresh
         clear
@@ -93,11 +116,11 @@ appel_sons(){
 
 	a='a'
 	i=1
-	if [[ $(ls ~/.config/soundcloud_downloader/ | grep "tracks.csv") == '' ]] ; then
+	if [[ $(ls ~/.config/soundcloud_downloader/ | grep "playlists.csv") == '' ]] ; then
 		printf "   |                                                                |\n"
 	else
 		while [[ $a != '' ]]; do
-			a=$(awk -F',' -v l=$i -v col=1 'NR==l {print $col}' ~/.config/soundcloud_downloader/tracks.csv)
+			a=$(awk -F',' -v l=$i -v col=1 'NR==l {print $col}' ~/.config/soundcloud_downloader/playlists.csv)
 			a=${a%/s-*}
 			a=${a%\?*}  
 			a=${a##*/}  
@@ -134,7 +157,7 @@ if [[ $touche == 'D' ]] || [[ $touche == 'd' ]]; then
 	mkdir -p "$TARGET_DIR"
 	cd "$TARGET_DIR" || exit
 	for PLAYLIST in "${PLAYLISTS[@]}"; do
-	    PLAYLISTS=$(awk -F',' -v l=$i -v col=1 'NR==l {print $col}' ~/.config/soundcloud_downloader/tracks.csv)
+	    PLAYLISTS=$(awk -F',' -v l=$i -v col=1 'NR==l {print $col}' ~/.config/soundcloud_downloader/playlists.csv)
 	    if [[ $PLAYLIST == '' ]];then
 		    break
 	    fi
@@ -202,8 +225,11 @@ elif [[ $touche == 'E' ]] || [[ $touche == 'e' ]] ; then
 			read lien
 			if [[ $lien != '' ]] && [[ $(echo $lien | grep "://") != '' ]] && [[ $(echo $lien | grep "soundcloud.com") != '' ]] ;then
 				TITRE=${lien%/s-*}  
-			        TITRE=${TITRE%\?*} 
+			    TITRE=${TITRE%\?*} 
 				TITRE=${TITRE##*/}
+				
+
+
 				
 			else
 				clear
@@ -221,8 +247,25 @@ elif [[ $touche == 'E' ]] || [[ $touche == 'e' ]] ; then
 			fi
 
 		done
-		echo $lien >> ~/.config/soundcloud_downloader/tracks.csv
+
+		if [[ $(echo "$lien" | grep "/sets/") != '' ]]; then
+
+		    if [[ $(echo "$lien" | grep "?in=") != '' ]]; then
+			
+
+			not_playlist
+
+		    else 
+				echo $lien >> ~/.config/soundcloud_downloader/playlists.csv
+
+		    fi
+
+		else 
+			not_playlist
+		fi
 		TITRE=''
+
+
 	elif [[ $touche2 == 'D' ]] || [[ $touche2 == 'd' ]] ; then
 		clear
 		appel_sons
@@ -237,7 +280,7 @@ elif [[ $touche == 'E' ]] || [[ $touche == 'e' ]] ; then
 		read supp
 		if [[ $supp -gt 0 ]] && [[ $supp -lt $i ]];then
 			var="$supp""d"
-			sed -i $var ~/.config/soundcloud_downloader/tracks.csv
+			sed -i $var ~/.config/soundcloud_downloader/playlists.csv
 			appel_sons
 		fi
 
