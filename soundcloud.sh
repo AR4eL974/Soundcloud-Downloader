@@ -4,7 +4,32 @@ BLUE='\033[0;34m'
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 NC='\033[0m' # No Color
+mkdir -p ~/.config/soundcloud_downloader/
+touch ~/.config/soundcloud_downloader/playlists.csv
 
+
+change_path(){
+	if [[ $(ls ~/.config | grep "soundcloud_downloader") != '' ]]; then
+		if [[ $(ls ~/.config/soundcloud_downloader/config | grep "config") != '' ]]; then
+			if [[ $(cat ~/.config/soundcloud_downloader/config | grep "DownloadPath") == '' ]];then
+				echo "DownloadPath=$1" >> ~/.config/soundcloud_downloader/config
+			else
+				sed -i '/DownloadPath=/d' ~/.config/soundcloud_downloader/config
+				echo "DownloadPath=$1" >> ~/.config/soundcloud_downloader/config				
+			fi
+
+		else 
+			echo "DownloadPath=$1" > ~/.config/soundcloud_downloader/config
+		fi
+	else
+		mkdir -p ~/.config/soundcloud_downloader/config
+		echo "DownloadPath=$1" > ~/.config/soundcloud_downloader/config
+
+
+	fi
+
+
+}
 son(){
 	downloaded_exists=0
 	mkdir -p $TARGET_DIR
@@ -129,6 +154,8 @@ while getopts "d:h" opt; do
     case $opt in
         d)
             TARGET_DIR="$OPTARG"
+			change_path $TARGET_DIR
+			
             ;;
         h)
             usage
@@ -357,25 +384,7 @@ elif [[ $touche == 'F' ]] || [[ $touche == 'f' ]] ; then
 	printf "   |      Please type new Download path:                            |\n"
 	printf "   |                                                                |\n"
 	read Path
-	if [[ $(ls ~/.config | grep "soundcloud_downloader") != '' ]]; then
-		if [[ $(ls ~/.config/soundcloud_downloader/config | grep "config") != '' ]]; then
-			if [[ $(cat ~/.config/soundcloud_downloader/config | grep "DownloadPath") == '' ]];then
-				echo "DownloadPath=$Path" >> ~/.config/soundcloud_downloader/config
-			else
-				sed -i '/DownloadPath=/d' ~/.config/soundcloud_downloader/config
-				echo "DownloadPath=$Path" >> ~/.config/soundcloud_downloader/config				
-			fi
-
-		else 
-			echo "DownloadPath=$Path" > ~/.config/soundcloud_downloader/config
-		fi
-	else
-		mkdir -p ~/.config/soundcloud_downloader/config
-		echo "DownloadPath=$Path" > ~/.config/soundcloud_downloader/config
-
-
-	fi
-
+	change_path $Path
 
 
 
