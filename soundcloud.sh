@@ -4,7 +4,108 @@ BLUE='\033[0;34m'
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 NC='\033[0m' # No Color
+mkdir -p ~/.config/soundcloud_downloader/
+touch ~/.config/soundcloud_downloader/playlists.csv
 
+
+change_path(){
+	if [[ $(ls ~/.config | grep "soundcloud_downloader") != '' ]]; then
+		if [[ $(ls ~/.config/soundcloud_downloader/config | grep "config") != '' ]]; then
+			if [[ $(cat ~/.config/soundcloud_downloader/config | grep "DownloadPath") == '' ]];then
+				echo "DownloadPath=$1" >> ~/.config/soundcloud_downloader/config
+			else
+				sed -i '/DownloadPath=/d' ~/.config/soundcloud_downloader/config
+				echo "DownloadPath=$1" >> ~/.config/soundcloud_downloader/config				
+			fi
+
+		else 
+			echo "DownloadPath=$1" > ~/.config/soundcloud_downloader/config
+		fi
+	else
+		mkdir -p ~/.config/soundcloud_downloader/config
+		echo "DownloadPath=$1" > ~/.config/soundcloud_downloader/config
+
+
+	fi
+
+
+}
+son(){
+	downloaded_exists=0
+	mkdir -p $TARGET_DIR
+	current_dir=$(pwd)
+	cd $TARGET_DIR
+	if [[ $(ls | grep "downloaded.txt") != '' ]];then
+		downloaded_exists=1
+	fi
+	echo "Downloading $TITRE..."
+	sleep 1
+	$YTMP3 "$lien"
+	echo "Download finished"
+	if [[ $downloaded_exists == 0 ]];then
+		rm downloaded.txt
+	fi
+	cd $current_dir
+	sleep 1
+						
+
+
+}
+
+
+not_playlist(){
+
+	clear
+	appel_sons
+	printf "   |----------------------------------------------------------------|\n"
+	printf "   |       Download: D    |    ${GREEN}Edit playlists: E${NC}    |    Quit: Q    |\n"
+	printf "   |----------------------------------------------------------------|\n"
+	printf "   |   ${GREEN}Add playlists: A${NC}   |   Delete playlists: D   | [*]Cancel: C  |\n"
+	printf "   |----------------------------------------------------------------|\n"
+	printf "   |                      Paste playlist here:                      |\n"
+	printf "   |        ${RED}This URL appears to be a track and not a playlist.  ${NC}    |\n"
+	printf "   |                  ${RED}Do you want to download it ? ${NC}                 |\n"
+	printf "   |----------------------------------------------------------------|\n"
+	printf "   | Yes, Download ts anyway  : Y |     No twin please don't: N     |\n"
+	printf "   |----------------------------------------------------------------|\n"
+	read -sn 1 touche_son
+	if [[ $touche_son == 'Y' ]] || [[ $touche_son == 'y' ]];then
+
+
+			clear
+		appel_sons
+		printf "   |----------------------------------------------------------------|\n"
+		printf "   |       Download: D    |    ${GREEN}Edit playlists: E${NC}    |    Quit: Q    |\n"
+		printf "   |----------------------------------------------------------------|\n"
+		printf "   |   ${GREEN}Add playlists: A${NC}   |   Delete playlists: D   | [*]Cancel: C  |\n"
+		printf "   |----------------------------------------------------------------|\n"
+		printf "   |                      Paste playlist here:                      |\n"
+		printf "   |        ${RED}This URL appears to be a track and not a playlist.  ${NC}    |\n"
+		printf "   |                  ${RED}Do you want to download it ? ${NC}                 |\n"
+		printf "   |----------------------------------------------------------------|\n"
+		printf "   | ${GREEN}Yes, Download ts anyway  : Y${NC} |     No twin please don't: N     |\n"
+		printf "   |----------------------------------------------------------------|\n"
+		downloaded_exists=0
+		echo "downloading $TITRE..."
+		sleep 1
+		current_dir=$(pwd)
+		cd $TARGET_DIR
+		if [[ $(ls | grep "downloaded.txt") != '' ]];then
+			downloaded_exists=1
+		fi
+		$YTMP3 "$lien"
+		echo "Download finished"
+		if [[ $downloaded_exists == 0 ]];then
+			rm downloaded.txt
+		fi
+		sleep 1
+		cd $current_dir
+	elif [[ $touche_son == 'n' ]] || [[ $touche_son == 'N' ]];then
+		break
+	fi
+
+
+}
 path_refresh(){
 if [[ $(ls ~/.config/soundcloud_downloader | grep "config") != '' ]];then
 	if [[ $(cat ~/.config/soundcloud_downloader/config | grep "DownloadPath") != '' ]];then
@@ -20,6 +121,11 @@ else
 	TARGET_DIR="$HOME/Music/SoundCloud_Downloader"
 fi
 }
+path_refresh
+if [ ! -d "$TARGET_DIR" ]; then
+    echo "Target directory not found, creating: $TARGET_DIR"
+    mkdir -p "$TARGET_DIR"
+fi
 
 while [[ 1 == 1 ]]; do
 usage() {
@@ -48,6 +154,8 @@ while getopts "d:h" opt; do
     case $opt in
         d)
             TARGET_DIR="$OPTARG"
+			change_path $TARGET_DIR
+			
             ;;
         h)
             usage
@@ -62,10 +170,7 @@ done
 
 
 # Target directory control and creation
-if [ ! -d "$TARGET_DIR" ]; then
-    echo "Target directory not found, creating: $TARGET_DIR"
-    mkdir -p "$TARGET_DIR"
-fi
+
 
 if ! command -v yt-dlp &> /dev/null; then
     echo "Please install yt-dlp before using SoundCloud Downloader"
@@ -73,7 +178,7 @@ fi
 YTMP3="yt-dlp --download-archive downloaded.txt --no-post-overwrites -ciwx --embed-thumbnail --audio-quality 0 --add-metadata --audio-format mp3 -o %(title)s "
 
 
-PLAYLISTS=$(awk -F',' -v l=1 -v col=1 'NR==l {print $col}' ~/.config/soundcloud_downloader/tracks.csv)
+PLAYLISTS=$(awk -F',' -v l=1 -v col=1 'NR==l {print $col}' ~/.config/soundcloud_downloader/playlists.csv)
 appel_sons(){
 		path_refresh
         clear
@@ -93,11 +198,11 @@ appel_sons(){
 
 	a='a'
 	i=1
-	if [[ $(ls ~/.config/soundcloud_downloader/ | grep "tracks.csv") == '' ]] ; then
+	if [[ $(ls ~/.config/soundcloud_downloader/ | grep "playlists.csv") == '' ]] ; then
 		printf "   |                                                                |\n"
 	else
 		while [[ $a != '' ]]; do
-			a=$(awk -F',' -v l=$i -v col=1 'NR==l {print $col}' ~/.config/soundcloud_downloader/tracks.csv)
+			a=$(awk -F',' -v l=$i -v col=1 'NR==l {print $col}' ~/.config/soundcloud_downloader/playlists.csv)
 			a=${a%/s-*}
 			a=${a%\?*}  
 			a=${a##*/}  
@@ -109,7 +214,14 @@ appel_sons(){
 	fi
 	
 	printf "   |                                                                |\n"
+	printf "   | Select one of the options below                                |\n"
+	printf "   | Or press P and paste to directly download a playlist/song      |\n"
+
 }
+
+
+
+
 choix_init(){
 printf "   |----------------------------------------------------------------|\n"
 printf "   |       Download: D    |    Edit playlists: E    |    Quit: Q    |\n"
@@ -134,7 +246,7 @@ if [[ $touche == 'D' ]] || [[ $touche == 'd' ]]; then
 	mkdir -p "$TARGET_DIR"
 	cd "$TARGET_DIR" || exit
 	for PLAYLIST in "${PLAYLISTS[@]}"; do
-	    PLAYLISTS=$(awk -F',' -v l=$i -v col=1 'NR==l {print $col}' ~/.config/soundcloud_downloader/tracks.csv)
+	    PLAYLISTS=$(awk -F',' -v l=$i -v col=1 'NR==l {print $col}' ~/.config/soundcloud_downloader/playlists.csv)
 	    if [[ $PLAYLIST == '' ]];then
 		    break
 	    fi
@@ -202,9 +314,26 @@ elif [[ $touche == 'E' ]] || [[ $touche == 'e' ]] ; then
 			read lien
 			if [[ $lien != '' ]] && [[ $(echo $lien | grep "://") != '' ]] && [[ $(echo $lien | grep "soundcloud.com") != '' ]] ;then
 				TITRE=${lien%/s-*}  
-			        TITRE=${TITRE%\?*} 
+			    TITRE=${TITRE%\?*} 
 				TITRE=${TITRE##*/}
 				
+				if [[ $(echo "$lien" | grep "/sets/") != '' ]]; then
+
+		    		if [[ $(echo "$lien" | grep "?in=") != '' ]]; then
+			
+
+						not_playlist
+
+			    	else 
+						echo $lien >> ~/.config/soundcloud_downloader/playlists.csv
+
+		    		fi
+
+				else 
+					not_playlist
+				fi
+
+
 			else
 				clear
 				appel_sons
@@ -221,8 +350,11 @@ elif [[ $touche == 'E' ]] || [[ $touche == 'e' ]] ; then
 			fi
 
 		done
-		echo $lien >> ~/.config/soundcloud_downloader/tracks.csv
+
+
 		TITRE=''
+
+
 	elif [[ $touche2 == 'D' ]] || [[ $touche2 == 'd' ]] ; then
 		clear
 		appel_sons
@@ -237,7 +369,7 @@ elif [[ $touche == 'E' ]] || [[ $touche == 'e' ]] ; then
 		read supp
 		if [[ $supp -gt 0 ]] && [[ $supp -lt $i ]];then
 			var="$supp""d"
-			sed -i $var ~/.config/soundcloud_downloader/tracks.csv
+			sed -i $var ~/.config/soundcloud_downloader/playlists.csv
 			appel_sons
 		fi
 
@@ -252,25 +384,112 @@ elif [[ $touche == 'F' ]] || [[ $touche == 'f' ]] ; then
 	printf "   |      Please type new Download path:                            |\n"
 	printf "   |                                                                |\n"
 	read Path
-	if [[ $(ls ~/.config | grep "soundcloud_downloader") != '' ]]; then
-		if [[ $(ls ~/.config/soundcloud_downloader/config | grep "config") != '' ]]; then
-			if [[ $(cat ~/.config/soundcloud_downloader/config | grep "DownloadPath") == '' ]];then
-				echo "DownloadPath=$Path" >> ~/.config/soundcloud_downloader/config
+	change_path $Path
+
+
+
+elif [[ $touche == 'P' ]] || [[ $touche == 'p' ]] ; then
+	clear
+	appel_sons
+	choix_init
+	printf "   |                      Paste playlist here:                      |\n"
+	printf "   |----------------------------------------------------------------|\n"
+		
+		while [[ $TITRE == '' ]];do
+			read lien
+			if [[ $lien != '' ]] && [[ $(echo $lien | grep "://") != '' ]] && [[ $(echo $lien | grep "soundcloud.com") != '' ]] ;then
+				TITRE=${lien%/s-*}  
+			    TITRE=${TITRE%\?*} 
+				TITRE=${TITRE##*/}
+				
+				if [[ $(echo "$lien" | grep "/sets/") != '' ]]; then
+
+		    		if [[ $(echo "$lien" | grep "?in=") != '' ]]; then
+						son
+
+			    	else 
+						clear
+						appel_sons
+						choix_init
+						printf "   |           ${RED}This URL is a playlist and not a song${NC}                |\n"
+						printf "   |----------------------------------------------------------------|\n"
+						printf "   |         Download:D            |   Add to download queue: A     |\n"
+						printf "   |----------------------------------------------------------------|\n"
+						read -sn 1 touche_playlist
+						if [[ $touche_playlist == 'D' ]] || [[ $touche_playlist == 'd' ]];then
+							clear
+							appel_sons
+							choix_init
+							printf "   |                      Paste playlist here:                      |\n"
+							printf "   |----------------------------------------------------------------|\n"
+							printf "   |           ${RED}This URL is a playlist and not a song${NC}                |\n"
+							printf "   |----------------------------------------------------------------|\n"
+							printf "   |         ${GREEN}Download:D${NC}            |   Add to download queue: A     |\n"
+							printf "   |----------------------------------------------------------------|\n"
+						    DOSSIER_LISTE=$TARGET_DIR"/"$TITRE
+	    					mkdir -p "$DOSSIER_LISTE"
+							current_dir=$(pwd)
+	 					    cd "$DOSSIER_LISTE"
+							echo "Downloading $TITRE..."
+							sleep 1
+	    					$YTMP3 "$lien"
+							echo "Download finished"
+							cd $current_dir
+
+							exit
+						elif [[ $touche_playlist == 'A' ]] || [[ $touche_playlist == 'a' ]];then
+
+
+							if [[ $(ls ~/.config | grep "soundcloud_downloader") != '' ]];then
+								if [[ $(ls ~/.config/soundcloud_downloader | grep playlists.csv) != '' ]];then
+									if [[ $(cat ~/.config/soundcloud_downloader/playlists.csv | grep "$lien") == '' ]];then
+										echo $lien >> ~/.config/soundcloud_downloader/playlists.csv
+										echo "ok"
+										exit
+									else 
+										printf "${RED}this playlist is already queued, not adding it${NC}\n"
+										sleep 2
+									fi
+
+								else
+									echo $lien > ~/.config/soundcloud_downloader/playlists.csv
+
+								fi
+							else
+								mkdir -p ~/.config/soundcloud_downloader
+								echo $lien > ~/.config/soundcloud_downloader/playlists.csv
+							fi
+							
+						fi
+
+						
+		    		fi
+
+				else 
+					son
+
+				fi
+
+
 			else
-				sed -i '/DownloadPath=/d' ~/.config/soundcloud_downloader/config
-				echo "DownloadPath=$Path" >> ~/.config/soundcloud_downloader/config				
+				clear
+				appel_sons
+				printf "   |----------------------------------------------------------------|\n"
+				printf "   |       Download: D    |    ${GREEN}Edit playlists: E${NC}    |    Quit: Q    |\n"
+				printf "   |----------------------------------------------------------------|\n"
+				printf "   |   ${GREEN}Add playlists: A${NC}   |   Delete playlists: D   | [*]Cancel: C  |\n"
+				printf "   |----------------------------------------------------------------|\n"
+
+				printf "   |                      Paste playlist here:                      |\n"
+				printf "   |                ${RED}Please enter a valid playlist URL           ${NC}    |\n"
+				printf "   |----------------------------------------------------------------|\n"
+
 			fi
 
-		else 
-			echo "DownloadPath=$Path" > ~/.config/soundcloud_downloader/config
-		fi
-	else
-		mkdir -p ~/.config/soundcloud_downloader/config
-		echo "DownloadPath=$Path" > ~/.config/soundcloud_downloader/config
+		done
 
 
-	fi
-
+		TITRE=''
 
 
 elif [[ $touche == 'Q' ]] || [[ $touche == 'q' ]] ; then
@@ -282,4 +501,3 @@ elif [[ $touche == 'Q' ]] || [[ $touche == 'q' ]] ; then
 
 fi
 done
-

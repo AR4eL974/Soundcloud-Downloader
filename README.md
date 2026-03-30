@@ -1,11 +1,11 @@
 Soundcloud Downloader is a lightweight tool built around yt-dlp to download SoundCloud playlists and keep track of them.
 
-If you can see this now,support for other platforms should be added soon.
 
 * [INSTALLATION](#installation)
 
     * [Automated install script](#automated-install-script)
-    * [Dependencies](#dependencies)
+    * [Manual installation](#manual-installation)
+        * [Dependencies](#dependencies)
 * [USAGE AND OPTIONS](#usage-and-options)
 
 * [NO AI IN THIS CODE](#no-ai-in-this-code)
@@ -17,7 +17,7 @@ For now there are two ways you can install SoundCloud-Downloader, using a [scrip
 
 
 <!-- MANPAGE: BEGIN EXCLUDED SECTION -->
-## AUTOMATED INSTALL SCRIPT
+# AUTOMATED INSTALL SCRIPT
 
 #### Recommended if you just want to install SoundCloud Downloader and use it without checking how it works
 
@@ -28,6 +28,8 @@ curl -o install.sh https://raw.githubusercontent.com/AR4eL974/Soundcloud-Downloa
 chmod +x install.sh
 ./install.sh
 ```
+
+# MANUAL INSTALLATION
 
 
 ## DEPENDENCIES
@@ -80,12 +82,13 @@ To run SoundCloud Downloader, you will need some essentials:
 
     ./soundcloud.sh [OPTIONS]
 
-Tip: Use `CTRL`+`F` (or `Command`+`F`)  to search by keywords
 
 
 <!-- Auto generated -->
 ## General Options:
-    -h            Displays this help menu                    
+    -h                Displays this help menu      
+
+    -d <Directory>    Changes the download path to <Directory> then runs the app
     
 
 # NO AI IN THIS CODE
