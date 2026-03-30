@@ -1,3 +1,4 @@
+<!-- v1.2 -->
 Soundcloud Downloader is a lightweight tool built around yt-dlp to download SoundCloud playlists and keep track of them.
 
 
