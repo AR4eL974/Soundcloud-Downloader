@@ -1,3 +1,6 @@
+#!/bin/bash
+
+
 os_detect(){
         
         if [[ $(which pacman) != '' ]]; then
