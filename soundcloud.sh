@@ -180,7 +180,7 @@ done
 if ! command -v yt-dlp &> /dev/null; then
     echo "Please install yt-dlp before using SoundCloud Downloader"
 fi
-YTMP3="yt-dlp --download-archive downloaded.txt --no-post-overwrites -ciwx --embed-thumbnail --audio-quality 0 --add-metadata --audio-format mp3 -o %(title)s "
+YTMP3="yt-dlp --download-archive downloaded.txt --trim-filenames 100 --no-post-overwrites -ciwx --embed-thumbnail --audio-quality 0 --add-metadata --audio-format mp3 -o %(title)s "
 
 
 PLAYLISTS=$(awk -F',' -v l=1 -v col=1 'NR==l {print $col}' ~/.config/soundcloud_downloader/playlists.csv)
