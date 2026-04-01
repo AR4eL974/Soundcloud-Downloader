@@ -64,10 +64,10 @@ not_playlist(){
 	printf "   |   ${GREEN}Add playlists: A${NC}   |   Delete playlists: D   | [*]Cancel: C  |\n"
 	printf "   |----------------------------------------------------------------|\n"
 	printf "   |                      Paste playlist here:                      |\n"
-	printf "   |        ${RED}This URL appears to be a track and not a playlist.  ${NC}    |\n"
+	printf "   |   ${RED} It looks like this URL is something else than a playlist  ${NC}  |\n"
 	printf "   |                  ${RED}Do you want to download it ? ${NC}                 |\n"
 	printf "   |----------------------------------------------------------------|\n"
-	printf "   | Yes, Download ts anyway  : Y |     No twin please don't: N     |\n"
+	printf "   |  Yes, Download: Y |  Dont download: N  | Add to list anyway: A |\n"
 	printf "   |----------------------------------------------------------------|\n"
 	read -sn 1 touche_son
 	if [[ $touche_son == 'Y' ]] || [[ $touche_son == 'y' ]];then
@@ -101,6 +101,10 @@ not_playlist(){
 		fi
 		sleep 1
 		cd $current_dir
+	
+	elif [[ $touche_son == 'a' ]] || [[ $touche_son == 'A' ]];then
+		echo $lien >> ~/.config/soundcloud_downloader/playlists.csv
+
 	elif [[ $touche_son == 'n' ]] || [[ $touche_son == 'N' ]];then
 		break
 	fi
