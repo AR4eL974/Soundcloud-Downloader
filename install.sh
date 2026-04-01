@@ -46,6 +46,9 @@ distro_installation (){
              arch_installation
         elif [[ $OS == "Redhat" ]]; then
                 redhat_installation
+        elif [[ $OS == "Debian" ]]; then
+                debian_installation
+
 	fi
  
 }
